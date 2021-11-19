@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: development
-      url: https://github.com/Kragada/EnvironmentDemo/tree/development
+      url: https://github.com/andrei-kozel/SalarySystem/tree/development
     steps:
       - uses: actions/checkout@v2
       - name: Setup .NET
@@ -66,4 +66,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+<<<<<<< HEAD
           release_id: ${{ steps.create_release.outputs.id }}
+=======
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: false
+          prerelease: false
+>>>>>>> 06f7ad49efef3ca250838b294cc6893f8d9acf8c
