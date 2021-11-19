@@ -2,13 +2,19 @@ name: .NET
 
 on:
   push:
-    branches: [ main ]
+    branches: [ development ]
   pull_request:
     branches: [ main ]
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
   build:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
+    environment: 
+      name: development
+      url: https://github.com/Kragada/EnvironmentDemo/tree/development
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET
@@ -22,6 +28,7 @@ jobs:
 
   test:
     name: test
+    if: github.event_name == 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -32,3 +39,29 @@ jobs:
         dotnet-version: 6.0.x
     - name: Test
       run: dotnet test --verbosity normal
+      
+  release:
+    name: Create Release
+    needs: test
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    environment: 
+      name: production
+      url: https://github.com/andrei-kozel/SalarySystem/releases
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: false
+          prerelease: false
