@@ -10,6 +10,7 @@ on:
 
 jobs:
   build:
+    name: Build
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     environment:
@@ -27,7 +28,7 @@ jobs:
         run: dotnet build --no-restore
 
   test:
-    name: test
+    name: Test
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -40,30 +41,26 @@ jobs:
         run: dotnet test --verbosity normal
 
   release:
+    name: Create Release
+    needs: test
     runs-on: ubuntu-latest
+    environment: 
+      name: production
+      url: https://github.com/Kragada/EnvironmentDemo/releases
     steps:
-    - name: Create Draft Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: <tofill>
-        release_name: <tofill>
-        draft: true
-        prerelease: false
-
-    - uses: actions/upload-release-asset@v1.0.1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./my-artifact.zip
-        asset_name: my-artifact.zip
-        asset_content_type: application/zip
-
-    - uses: eregon/publish-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        release_id: ${{ steps.create_release.outputs.id }}
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: false
+          prerelease: false
