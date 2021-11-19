@@ -23,6 +23,20 @@ namespace SalarySystem.UnitTests
         }
 
         [TestMethod]
+        public void Create_User()
+        {
+            String actual = _system.CreateAccount("acc1", "acc1", "user", 10000);
+            String expected = "You are not the admin";
+            Assert.AreEqual(expected, actual);
+
+            _system.CreateAdmin();
+            _system.LogIn("admin1", "admin1234");
+            actual = _system.CreateAccount("acc1", "acc1", "user", 10000);
+            expected = "Successfully created.";
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
         public void LogIn_Account()
         {
             String actual = _system.LogIn("acc", "password");
