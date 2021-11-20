@@ -133,7 +133,6 @@ public class SalarySystem
         StartApp();
         break;
       case 5:
-
         string result = sys.ShowAllActiveUsers();
         Console.Write(result);
         PressToContinue();
