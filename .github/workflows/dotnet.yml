@@ -45,9 +45,9 @@ jobs:
     if: github.event_name == 'pull_request'
     needs: test
     runs-on: ubuntu-latest
-    environment: 
+    environment:
       name: production
-      url: https://github.com/Kragada/EnvironmentDemo/releases
+      url: https://github.com/andrei-kozel/SalarySystem/releases
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
